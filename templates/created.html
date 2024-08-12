@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}
+Заказ создан - Интернет-магазин
+{% endblock %}
+{% block content %}
+<div class="alert alert-success" role="alert">
+  Ваш заказ {{ order.id }} на сумму {{ order.get_total_cost }} руб. успешно создан.
+
+</div>
+{% endblock %}

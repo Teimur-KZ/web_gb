@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}
+Корзина - Интернет-магазин
+{% endblock %}
+{% block content %}
+
+<table class="table table-striped">
+    <thead>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li
+                {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+
+        </li>
+
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <tr>
+        <th></th>
+        <th>Название товара</th>
+        <th>Количество</th>
+        <th>Цена</th>
+        <th>Общая стоимость</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    {% load cart_tags %}
+
+    {% for cart_product in cart_products %}
+    <tr id="productRow{{ cart_product.product.id }}{{ cart_product.size.id }}">
+        <td><img src="{{ cart_product.product.image.url }}" alt="Изображение товара" width="50" height="50"></td>
+        <td><a href="{% url 'product_info' cart_product.product.id %}">{{ cart_product.product.name }}</a>
+            <br>({{ cart_product.size.size }})
+        </td>
+        <td>
+
+            <form method="post" action="{% url 'change_quantity' cart_product.product.id %}"
+                  id="changeQuantityForm{{ cart_product.product.id }}{{ cart_product.size.id }}">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="{{ cart_product.quantity }}" min="1" style="width: 50px;"
+                       onchange="changeQuantity('{{ cart_product.product.id }}', '{{ cart_product.size.id }}')">
+                <input type="hidden" name="size" value="{{ cart_product.size.id }}">
+            </form>
+
+
+        </td>
+        <td>{{ cart_product.product.price }}</td>
+        <td>{{ cart_product.product.price|total_price:cart_product.quantity }}</td>
+        <td>
+            <form method="post" action="{% url 'remove_from_cart' cart_product.product.id cart_product.size.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Удалить">
+            </form>
+
+        </td>
+    </tr>
+    {% endfor %}
+
+
+    </tbody>
+
+</table>
+<tr>
+    <div id="availabilityMessage" style="display: none;"></div>
+</tr>
+<tr>
+    <td>Количество товаров: {{ total_quantity }}</td>
+    <td>Итого: {{ total_price }}</td>
+    <td><p><a href="{% url 'orders:order_create' %}" class="btn btn-primary">Оформить заказ</a></p></td>
+</tr>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        setInterval(function(){
+            {% for cart_product in cart_products %}
+            $.ajax({
+                url: '/cart/check_availability/{{ cart_product.product.id }}/{{ cart_product.size.id }}/',
+                success: function(data){
+                    var product_size_id = '{{ cart_product.product.id }}_{{ cart_product.size.id }}';
+                    if (data[product_size_id] < 3) {
+                        var row = document.getElementById('productRow{{ cart_product.product.id }}{{ cart_product.size.id }}');
+                        row.style.backgroundColor = 'yellow';
+                        var message = '{{ cart_product.product.name }} <br>размера {{ cart_product.size.size }} заканчивается. Осталось менее 3 шт.';
+                        document.getElementById('availabilityMessage').innerHTML = message;
+                        document.getElementById('availabilityMessage').style.display = 'block';
+                    }
+                }
+            });
+            {% endfor %}
+        }, 600000);
+    });
+
+        function changeQuantity(productId, sizeId) {
+        var form = document.getElementById('changeQuantityForm' + productId + sizeId);
+        form.submit();
+    }
+
+
+</script>
+
+{% endblock %}

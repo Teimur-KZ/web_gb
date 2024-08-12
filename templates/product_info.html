@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ seo_title }} - Интернет-магазин
+{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ seo_description }}">
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+{% block content %}
+
+
+
+<style>
+    .product-detail-card {
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        background-color: #fff;
+        color: #333;
+    }
+    .product-detail-card img {
+        width: 250px;
+        height: auto;
+        border-radius: 10px;
+        margin-left: 20px;
+    }
+    .product-info {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .product-info h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+    .product-info p {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+    .product-info form {
+        margin-top: 20px;
+    }
+    .product-info select,
+    .product-info input[type="submit"] {
+        margin-top: 10px;
+    }
+    .back-link {
+        margin-top: 20px;
+        display: inline-block;
+        text-decoration: none;
+        color: #007bff;
+        transition: color 0.3s;
+    }
+    .back-link:hover {
+        color: #0056b3;
+    }
+
+    /* Адаптивные стили */
+    @media (max-width: 768px) {
+        .product-detail-card {
+            flex-direction: column;
+            align-items: center;
+        }
+        .product-detail-card img {
+            width: 100%;
+            margin-left: 0;
+            margin-top: 20px;
+        }
+    }
+</style>
+
+<div class="product-detail-card">
+    <div class="product-info">
+        <h3>Название товара: {{ product.name }}</h3>
+        <p>Описание товара: {{ product.description | safe }}</p>
+        <p>Бренд: {{ product.brand }}</p>
+        <p>Цена товара: {{ product.price }}</p>
+        <form id="productForm" method="post" action="{% url 'add_to_cart' product.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <select id="sizeSelect" name="size">
+                {% for size_quantity in productSizeQuantity %}
+                <option value="{{ size_quantity.size.id }}">{{ size_quantity.size.size }}</option>
+                {% endfor %}
+            </select>
+            <div id="stockStatus"></div>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li
+                {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <input type="submit" id="addToCartButton" value="Добавить в корзину"
+                   {% if not productSizeQuantity %}disabled{% endif %}>
+        </form>
+    </div>
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="Изображение товара">
+    {% endif %}
+</div>
+
+<a href="{% url 'product_category' category %}" class="back-link">Вернуться к списку товаров</a>
+
+<script>
+    document.getElementById('sizeSelect').addEventListener('change', function() {
+        var selectedSizeId = this.value;
+        {% for size_quantity in productSizeQuantity %}
+            if ({{ size_quantity.size.id }} == selectedSizeId) {
+                var quantity = {{ size_quantity.quantity }};
+                var stockStatusDiv = document.getElementById('stockStatus');
+                var addToCartButton = document.getElementById('addToCartButton');
+                if (quantity > 5) {
+                    stockStatusDiv.textContent = 'Остаток в наличии';
+                    addToCartButton.disabled = false;
+                } else if (quantity > 0) {
+                    stockStatusDiv.textContent = 'Осталось мало';
+                    addToCartButton.disabled = false;
+                } else {
+                    stockStatusDiv.textContent = 'Нет в наличии';
+                    addToCartButton.disabled = true;
+                }
+            }
+        {% endfor %}
+    });
+    document.getElementById('sizeSelect').dispatchEvent(new Event('change'));
+</script>
+
+{% endblock %}

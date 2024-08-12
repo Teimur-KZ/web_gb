@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Оформление заказа</h1>
+<form method="post">
+    {% csrf_token %}
+    <tr>
+    <tr>
+        <td> Количество товаров: {{ total_quantity }} | Общая стоимость: {{ total_price }} руб. + Доставка: {{ delivery_price }} руб.
+        </td>
+    </tr>
+    </tr>
+    <tr>
+        <p>Адрес доставки:
+            {{ request.user.profile.adress_of_delivery_line_1 }}
+            {{ profile.adress_of_delivery_line_2 }}
+            {{ request.user.profile.adress_of_city }}
+            {{ request.user.profile.adress_of_state }}
+            {{ request.user.profile.adress_of_zip }}
+        </p>
+
+    </tr>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Оформить заказ</button>
+</form>
+{% endblock %}

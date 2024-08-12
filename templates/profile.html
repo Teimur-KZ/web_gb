@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ title }} - Информация о клиенте
+{% endblock %}
+{% block content %}
+<h2>Информация о клиенте: {{ profile.first_name }}</h2>
+<table class="table table-striped">
+    <tr>
+        <td>Имя:</td>
+        <td>{{ request.user.profile.first_name }} </td>
+        <td rowspan="6"><img src="{{ request.user.profile.avatar.url }}" alt="Фото клиента" width="250" height="250"></td>
+    </tr>
+    <tr>
+        <td>Фамилия:</td>
+        <td>{{ request.user.profile.last_name }}</td>
+    </tr>
+    <tr>
+        <td>Дата рождения:</td>
+        <td>{{ request.user.profile.date_of_birth }}</td>
+    </tr>
+    <tr>
+        <td>Email:</td>
+        <td>{{ request.user.email }}</td>
+    </tr>
+    <tr>
+        <td>Телефон:</td>
+        <td>{{ request.user.profile.phone_number }}</td>
+    </tr>
+    <tr>
+        <td>Адрес доставки:</td>
+        <td>{{ request.user.profile.adress_of_delivery_line_1 }}
+            {{ profile.adress_of_delivery_line_2 }}
+            {{ request.user.profile.adress_of_city }}
+            {{ request.user.profile.adress_of_state }}
+            {{ request.user.profile.adress_of_zip }}</td>
+
+    </tr>
+    <tr>
+        <td>Дата регистрации:</td>
+        <td>{{ request.user.profile.add_data }}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'edit_profile' %}">Редактировать профиль</a>
+        </td>
+    </tr>
+
+</table>
+{% endblock %}

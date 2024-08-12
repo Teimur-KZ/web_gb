@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ title }} - Интернет-магазин
+{% endblock %}
+{% block content %}
+
+<style>
+    .client-card {
+        margin: 15px; # добавим отступы;
+        padding: 10px; # добавим отступы и внутренний отступ;
+        #border: 1px solid #ddd; # добавим рамку;
+        border-radius: 10px; # добавим скругление углов;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); # добавим тень;
+        text-align: center; # выровняем текст по центру;
+        transition: transform 0.2s; # добавим плавное увеличение;
+    }
+    .client-card:hover {
+        transform: scale(1.05); # увеличим карточку при наведении;
+    }
+    .category-logo {
+        max-width: 100px; # ограничим ширину;
+        max-height: 100px; # ограничим высоту;
+        border-radius: 50%; # добавим скругление углов;
+        margin-bottom: 10px; # добавим отступ снизу;
+    }
+    .container { # добавим стили для контейнера;
+        display: flex; # добавим гибкость;
+        flex-wrap: wrap; # добавим перенос на новую строку;
+        justify-content: center; # выровняем по центру;
+    }
+    .row { # добавим отступы между строками;
+        display: flex; # добавим гибкость;
+        flex-wrap: wrap; # добавим перенос на новую строку;
+        justify-content: center; # выровняем по центру;
+    }
+</style>
+
+<div class="container">
+    <h2>Все категории товаров</h2>
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-3 client-card">
+                <h5><a href="{% url 'product_category' category.name %}" title="{{ category.name }}">{{ category.name }}</a></h5>
+                {% if category.logo %}
+                <a href="{% url 'product_category' category.name %}" title="{{ category.name }}"><img src="{{ category.logo.url }}" alt="{{ category.name }}" class="category-logo"></a>
+                {% endif %}
+            </div>
+            {% if forloop.counter|divisibleby:3 %} <!-- добавим условие для переноса на новую строку -->
+                </div><div class="row">
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

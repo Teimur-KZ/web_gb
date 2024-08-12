@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ category.seo_title }} - Интернет-магазин
+{% endblock %}
+{% block meta %}
+<meta name="description" content="{{ category.seo_description }}">
+<meta name="keywords" content="{{ category.seo_keywords }}">
+{% endblock %}
+{% block content %}
+
+
+<style>
+    .product-card {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: auto;
+        text-decoration: none;
+        color: inherit;
+    }
+    .product-card:hover {
+        transform: scale(1.05);
+    }
+    .product-card img {
+        width: 150px;
+        height: auto;
+        border-radius: 10px;
+        margin-left: 10px;
+    }
+    .product-info {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .product-name {
+        font-size: 1.2em;
+        margin-bottom: 5px;
+    }
+    .product-price {
+        font-size: 1.1em;
+        margin-top: auto;
+    }
+    .product-quantity {
+        font-size: 1em;
+        margin: 5px 0;
+    }
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .product-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+    .product-card a:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+    .product-card:hover .product-info h3,
+    .product-card:hover .product-info p {
+        text-decoration: none;
+        color: inherit;
+    }
+    .product-card:hover .product-info h3 a,
+    .product-card:hover .product-info p a {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>
+
+<div class="container">
+
+    <div class="row">
+        <h2>Товары в категории: {{ category.name }}</h2>
+{% if category.description %}
+    <p>{{ category.description }}</p>
+{% else %}
+    <p></p>
+{% endif %}
+        {% for product in products %}
+        <a href="{% url 'product_info' product.id %}" class="col-md-12 product-card">
+            <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-quantity">
+                    {% if product.quantity > 3 %}
+                    <font color="green"><b>В наличии</b></font>
+                    {% elif product.quantity > 0 %}
+                    <font color="orange"><b>Осталось мало</b></font>
+                    {% else %}
+                    <font color="red"><b>Нет в наличии</b></font>
+                    {% endif %}
+                </p>
+                <p class="product-price">Цена: {{ product.price }}</p>
+            </div>
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+    <tr>
+        <td><a href="javascript:history.back()">Назад</a></td>
+    </tr>
+</div>
+{% endblock %}
