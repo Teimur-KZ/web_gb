@@ -31,7 +31,7 @@ DEBUG = False # режим отладки #!
 SESSION_COOKIE_SECURE = True #!
 CSRF_COOKIE_SECURE = True #!
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'Teimur_GB.pythonanywhere.com'] # список хостов, которые могут обращаться к проекту
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'Teimur.pythonanywhere.com'] # список хостов, которые могут обращаться к проекту
 
 
 # Application definition
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'myshop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Teimur$default',
+        'NAME': 'Teimur$TeimurGB',
         'USER': 'Teimur',
         'PASSWORD': os.getenv('MYSQL_PASSWORD'),
         'HOST': 'Teimur.mysql.pythonanywhere-services.com',

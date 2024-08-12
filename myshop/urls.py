@@ -28,5 +28,5 @@ urlpatterns = [
     path('', include('pages_app.urls')), # путь к приложению страниц
     path('orders/', include('orders_app.urls')), # путь к приложению заказов
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
